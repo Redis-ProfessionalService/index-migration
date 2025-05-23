@@ -83,6 +83,32 @@ If you encounter issues:
 3. Check that the index name exists in the source database
 4. Verify sufficient permissions on both Redis instances
 5. Check the console output for specific error messages
+
+## Additional Files:
+
+### `compare_indexes.py`
+A utility script that compares Redis indexes between source and target Redis instances. It identifies indexes that exist only in the source, only in the target, or in both instances. This is useful for verifying index migration completeness and identifying any discrepancies between environments.
+
+### `compare_keys.py`
+A comprehensive key comparison tool that analyzes Redis keys between source and target instances. It provides detailed information about:
+- Keys present in only source or target
+- Key types and patterns
+- Scan times and performance metrics
+- Key pattern analysis with counts
+This tool is essential for ensuring complete data migration and identifying any missing or extra keys.
+
+### `redis_vecotr_hash_search.py`
+A demonstration script that showcases Redis vector search capabilities with multiple index types:
+- Document index (`docIdx`) for text embeddings
+- Image index (`imageIdx`) for image embeddings
+- Audio index (`audioIdx`) for audio embeddings
+The script includes functionality for:
+- Creating vector indexes with different schemas
+- Adding sample data with vector embeddings
+- Performing vector similarity searches
+- Managing and listing indexes
+This tool is used to populate an empty database with an index and keys, which can then be used for testing the migration tool.
+
 ---
 _Copyright (c) 2025 Redis Ltd. All rights reserved.
   This material is provided under the terms of your Professional Services agreement or Statement of Work (SOW) with Redis Ltd. and subject to the applicable Redis customer agreement. Unless otherwise agreed in writing, you are granted a limited, non-exclusive, non-sublicensable, non-transferable, revocable license to use this material solely for your internal operations in connection with the use of Redis services._
