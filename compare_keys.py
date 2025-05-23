@@ -1,6 +1,7 @@
 import redis
 from typing import List, Set, Tuple, Dict
 import time
+import argparse
 
 def get_redis_connection(host: str, port: int) -> redis.Redis:
     """Create and return a Redis connection."""
@@ -57,6 +58,11 @@ def analyze_key_patterns(keys: Set[str]) -> Dict[str, int]:
     return patterns
 
 def main():
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Compare Redis keys between source and target instances')
+    parser.add_argument('--debug', action='store_true', help='Enable detailed debug output')
+    args = parser.parse_args()
+
     # Source Redis connection (your original cluster)
     source_client = get_redis_connection(
         host='node1.cluster-kmiller.ps-redis.com',
@@ -91,17 +97,18 @@ def main():
         print("\nKey Comparison Results:")
         print("-" * 50)
         
-        print("\nKeys only in source:")
-        for key in sorted(only_in_source)[:10]:  # Show first 10 keys
-            key_type = get_key_type(source_client, key)
-            print(f"- {key} (Type: {key_type})")
-        if len(only_in_source) > 10:
-            print(f"... and {len(only_in_source) - 10} more keys")
-            
-        print("\nKeys in target:")
-        for key in sorted(target_keys):  # Show all keys
-            key_type = get_key_type(target_client, key)
-            print(f"- {key} (Type: {key_type})")
+        if args.debug:
+            print("\nKeys only in source:")
+            for key in sorted(only_in_source)[:10]:  # Show first 10 keys
+                key_type = get_key_type(source_client, key)
+                print(f"- {key} (Type: {key_type})")
+            if len(only_in_source) > 10:
+                print(f"... and {len(only_in_source) - 10} more keys")
+                
+            print("\nKeys in target:")
+            for key in sorted(target_keys):  # Show all keys
+                key_type = get_key_type(target_client, key)
+                print(f"- {key} (Type: {key_type})")
         
         # Print summary
         print("\nSummary:")
@@ -116,10 +123,12 @@ def main():
         print(f"Target scan time: {target_scan_time:.2f} seconds")
         
         print("\nKey Pattern Analysis:")
-        print("\nSource Redis Key Patterns:")
-        for pattern, count in sorted(source_patterns.items(), key=lambda x: x[1], reverse=True):
-            print(f"- {pattern}: {count} keys")
-            
+        
+        if args.debug: 
+            print("\nSource Redis Key Patterns:")
+            for pattern, count in sorted(source_patterns.items(), key=lambda x: x[1], reverse=True):
+                print(f"- {pattern}: {count} keys")
+    
         print("\nTarget Redis Key Patterns:")
         for pattern, count in sorted(target_patterns.items(), key=lambda x: x[1], reverse=True):
             print(f"- {pattern}: {count} keys")
